@@ -82,3 +82,7 @@ def load_and_split_iris_data(test_size=0.2, random_state=42):
 
 #call the function to load and split the data
 X_train, X_test, y_train, y_test = load_and_split_iris_data()
+
+#export the preprocessed dataset 
+iris_df.to_csv('preprocessed_iris.csv', index=False)
+print("Preprocessed iris dataset saved to 'preprocessed_iris.csv'")
