@@ -5,9 +5,13 @@
 For this retail data warehouse, I implemented a Star Schema design consisting of one central fact table (SalesFact) and three dimension tables (CustomerDim, ProductDim, TimeDim).
 
 ### Design Rationale (Star vs. Snowflake): 
+
 I chose the Star Schema over the Snowflake Schema because of its simplicity and query performance. 
+
 In a Star Schema, dimensions are denormalized, meaning attributes like "Category" are stored directly in the ProductDim table rather than being split into sub-tables. 
+
 This reduces the number of JOIN operations required during complex analytical queries (OLAP), leading to faster retrieval times.
+
 It is also more intuitive for business analysts to understand when writing ad-hoc SQL queries.
 
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/d13563c3-1610-433f-8254-539f9cbb6595" />
@@ -16,24 +20,34 @@ It is also more intuitive for business analysts to understand when writing ad-ho
 
 The ETL (Extract, Transform, Load) pipeline was implemented in Python (etl_retail.py) using synthetic data generation to mimic the UCI Online Retail dataset.
 
-###Extract: 
+### Extract: 
 
 Generated 1,000 rows of synthetic transactional data, ensuring realistic weighting (e.g., 60% of customers located in the UK).
 
 ### Transform:
 
-Cleaning: Removed invalid rows (Quantity $\le$ 0) to handle returns and errors4.
+####Cleaning: 
 
-Enrichment: Calculated TotalSales (Quantity * UnitPrice) and derived time-based attributes (Year, Quarter, Month) from the invoice date5.
+Removed invalid rows (Quantity $\le$ 0) to handle returns and errors4.
 
-Filtering: Filtered data to strictly include sales from the last year (relative to the exam date of Aug 12, 2025)6.
+####Enrichment: 
 
-Load: Loaded the processed data into an SQLite database (retail_dw.db). 
+Calculated TotalSales (Quantity * UnitPrice) and derived time-based attributes (Year, Quarter, Month) from the invoice date5.
+
+####Filtering:
+
+Filtered data to strictly include sales from the last year (relative to the exam date of Aug 12, 2025)6.
+
+#### Load: 
+
+Loaded the processed data into an SQLite database (retail_dw.db). 
+
+####Error handling
 
 I implemented error handling using drop_duplicates to strictly enforce Unique Constraints on Primary Keys, preventing IntegrityError crashes7.
 
 
-Task 3: OLAP Analysis & Insights
+## Task 3: OLAP Analysis & Insights
 
 Using SQL queries on the data warehouse, the following insights were derived:
 
@@ -53,7 +67,9 @@ The ratio of TotalSales to Number_Of_Transactions in this category suggests a hi
 
 
 # Section 2: Data Mining
-Task 1: Preprocessing & Exploration
+
+## Task 1: Preprocessing & Exploration
+
 The Iris dataset was loaded and split into training (80%) and testing (20%) sets.
 
 Features were normalized using Min-Max scaling to ensure distance-based algorithms (like KNN and K-Means) perform optimally.
@@ -61,7 +77,7 @@ Features were normalized using Min-Max scaling to ensure distance-based algorith
 Exploratory Data Analysis (EDA) using Pairplots revealed that the Setosa species is linearly separable from the others, while Versicolor and Virginica show some overlap in feature space.
 
 
-Task 2: Clustering Analysis (K-Means)
+## Task 2: Clustering Analysis (K-Means)
 
 I applied K-Means clustering to the unlabeled feature data.
 
@@ -80,9 +96,11 @@ Misclassifications: Misclassifications were primarily observed between Versicolo
 Application: In a real-world retail context, similar clustering techniques could be used for Customer Segmentation, grouping buyers based on spending habits (e.g., "High Spenders", "Discount Hunters") to tailor marketing strategies.
 
 
-Task 3: Classification & Association Rules
+## Task 3: Classification & Association Rules
 
-Part A: Classification (Decision Tree vs. KNN) I compared a Decision Tree (Entropy-based) against K-Nearest Neighbors (k=5).
+### Part A: Classification (Decision Tree vs. KNN)
+
+I compared a Decision Tree (Entropy-based) against K-Nearest Neighbors (k=5).
 
 Performance: Both models achieved an identical Accuracy of 96.67%, misclassifying only 1 instance each on the test set.
 
@@ -96,7 +114,9 @@ Verdict: The Decision Tree is determined to be the better model for this specifi
 
 Its interpretable nature allows biologists or analysts to clearly visualize the "rules" (e.g., Petal Width < 0.8 cm) that define a species. KNN, while accurate, operates as a "black box" based on distance, offering less explanatory power.
 
-Part B: Association Rule Mining (Apriori) Using synthetic market basket data, I identified strong purchasing patterns. 
+### Part B: Association Rule Mining (Apriori)
+
+Using synthetic market basket data, I identified strong purchasing patterns. 
 
 The top rule found was:
 Rule: (Bread, Yogurt) -> (Milk)
@@ -110,4 +130,5 @@ Interpretation: Customers who buy Bread and Yogurt are 1.53 times more likely to
 This strong correlation suggests these items form a "Breakfast Bundle."
 
 Actionable Insight: The store should place these items in close proximity or run cross-promotions (e.g., "Buy Bread & Yogurt, get 10% off Milk") to increase basket size.
+
 
